@@ -6,7 +6,7 @@ import json
 DATASET_PATH = "genres"
 JSON_PATH = "data.json"
 
-SAMPLE_RATE = 22050
+SAMPLE_RATE = 22050 #test
 DURATION = 30 # duration of each audio file
 SAMPLES_PER_TRACK = SAMPLE_RATE * DURATION
 

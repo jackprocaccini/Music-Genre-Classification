@@ -3,5 +3,5 @@
 /marsyas_data/
 /audio_set_data/
 /.vscode/
-/ontology.json
-/eval_segments.csv
+*/ontology.json
+*/eval_segments.csv

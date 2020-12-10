@@ -8,3 +8,4 @@
 marsyas_data.json
 audio_set_data.json
 Jack/balanced_train_segments.csv
+Jack/audio_set_data

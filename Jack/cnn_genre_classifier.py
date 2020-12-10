@@ -2,6 +2,7 @@ import json
 import numpy as np
 from sklearn.model_selection import train_test_split
 import tensorflow.keras as keras
+import matplotlib.pyplot as plt
 
 DATA_PATH = "../audio_set_data.json"
 
@@ -62,6 +63,26 @@ def build_model(input_shape):
 
     return model
 
+def plot_history(history):
+    fig, axs = plt.subplots(2)
+
+    # create accuracy subplot
+    axs[0].plot(history.history["accuracy"], label="train accuracy")
+    axs[0].plot(history.history["val_accuracy"], label="test accuracy")
+    axs[0].set_ylabel("Accuracy")
+    axs[0].legend(loc="lower right")
+    axs[0].set_title("Accuracy Eval")
+
+    # create error subplot
+    axs[1].plot(history.history["loss"], label="train error")
+    axs[1].plot(history.history["val_loss"], label="test error")
+    axs[1].set_ylabel("Error")
+    axs[1].set_xlabel("Epoch")
+    axs[1].legend(loc="upper right")
+    axs[1].set_title("Error Eval")
+
+    plt.show()
+
 def predict(model, X, y):
 
     X = X[np.newaxis, ...]
@@ -82,20 +103,23 @@ if __name__ =="__main__":
     # build the CNN net
     input_shape = (X_train.shape[1], X_train.shape[2], X_train.shape[3])
     model = build_model(input_shape)
+    model.summary()
 
     # compile the network
     optimizer = keras.optimizers.Adam(learning_rate=0.0001)
     model.compile(optimizer=optimizer, loss="sparse_categorical_crossentropy", metrics=['accuracy'])
 
     # train the CNN
-    model.fit(X_train, y_train, validation_data=(X_validation, y_validation), batch_size=32, epochs=30)
+    history = model.fit(X_train, y_train, validation_data=(X_validation, y_validation), batch_size=32, epochs=30)
 
     # evaluate the CNN on the test set
     test_error, test_accuracy = model.evaluate(X_test, y_test, verbose=1)
     print("Accuracy on test set is: {}".format(test_accuracy))
 
+    plot_history(history)
+
     # make prediction on a sample
-    X = X_test[100]
-    y = y_test[100]
+    X = X_test[30]
+    y = y_test[30]
 
     predict(model, X, y)

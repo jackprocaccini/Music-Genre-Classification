@@ -10,55 +10,44 @@ AUDIO_SET_DATASET_PATH = "../audio_set_data"
 AUDIO_SET_JSON_PATH = "../audio_set_data.json"
 
 SAMPLE_RATE = 22050
-MARSYAS_DURATION = 30 # duration of each audio file
+MARSYAS_DURATION = 30
 AUDIO_SET_DURATION = 10
-SAMPLES_PER_TRACK = SAMPLE_RATE * AUDIO_SET_DURATION
+SAMPLES_PER_TRACK = SAMPLE_RATE * MARSYAS_DURATION
 
 def save_mfcc(dataset_path, json_path, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=5):
     
-    # dictionary to store data
     data = {
-        "mapping": [], # mapping "classical" to 0, "blues" to 1, etc
-        "mfcc": [], # mfccs themselves are the training inputs
-        "labels": [] # outputs or targets that we expect
+        "mapping": [],
+        "mfcc": [],
+        "labels": []
     }
 
     num_samples_per_segment = int(SAMPLES_PER_TRACK / num_segments)
-    expected_number_mfcc_vectors_per_segment = math.ceil(num_samples_per_segment / hop_length) # 1.2 -> 2
+    expected_number_mfcc_vectors_per_segment = math.ceil(num_samples_per_segment / hop_length)
 
-    # loop through all the genres
-    # dirpath is the path to the folder we're currently in
-    # dirnames are all the names of the sub folders in dirpath folder
-    # all the files we have in dirpath
     for i, (dirpath, dirnames, filenames) in enumerate(os.walk(dataset_path)):
         
-        # ensure that we're not at the root level
         if dirpath is not dataset_path:
             
-            # save the semantic label
-            dirpath_components = dirpath.split("\\") # genre/blues => [genre, blues]
+            dirpath_components = dirpath.split("\\")
             semantic_label = dirpath_components[-1]
             data["mapping"].append(semantic_label)
             print("\nProcessing {}".format(semantic_label))
 
-            # process files for a specific genre
             for f in filenames:
 
-                # load the audio file
                 file_path = os.path.join(dirpath, f)
                 signal, sr = librosa.load(file_path, sr=SAMPLE_RATE)
 
-                # process segments extracting mfcc and storing the data
                 for s in range(num_segments):
-                    start_sample = num_samples_per_segment * s # s=0 -> 0
-                    finish_sample = start_sample + num_samples_per_segment #s=0 -> num_samples_per_segment
+                    start_sample = num_samples_per_segment * s
+                    finish_sample = start_sample + num_samples_per_segment
 
                     try:
                         mfcc = librosa.feature.mfcc(signal[start_sample:finish_sample], sr=sr, n_fft=n_fft, n_mfcc=n_mfcc, hop_length=hop_length)
                     
                         mfcc = mfcc.T
 
-                        # store mfcc for segment if it has the expected length
                         if len(mfcc) == expected_number_mfcc_vectors_per_segment:
                             data["mfcc"].append(mfcc.tolist())
                             data["labels"].append(i - 1)

@@ -1,7 +1,8 @@
 # Music Genre Classifier
-## Written by Jack Procaccini, Dante Vattimo and Matt Rowntree
+## Jack Procaccini, Dante Vattimo and Matt Rowntree
 
-A Convolutional Neural Network written in Python with the goal of identifying music genres. This project was written for CSC 434 and follows Velerio Velardo's [tutorial](https://www.youtube.com/watch?v=fMqL5vckiU0) on the same topic.
+A Convolutional Neural Network written in Python with the goal of identifying music genres within a given data set.
+Code works for [GTZAN](http://marsyas.info/downloads/datasets.html) data set and Google's [Audio_Set] (https://research.google.com/audioset/index.html)
 
 ## Libraries Used
 * [TensorFlow](https://www.tensorflow.org/)

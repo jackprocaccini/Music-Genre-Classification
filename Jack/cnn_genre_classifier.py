@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 import tensorflow.keras as keras
 
-DATA_PATH = "C:/Users/User/Desktop/Python/CSC434 Project/Music-Genre-Classification/data.json"
+DATA_PATH = "../audio_set_data.json"
 
 def load_data(data_path):
 

@@ -3,12 +3,16 @@ import librosa
 import math
 import json
 
-DATASET_PATH = "genres"
-JSON_PATH = "data.json"
+MARSYAS_DATASET_PATH = "../marsyas_data"
+MARSYAS_JSON_PATH = "../marsyas_data.json"
 
-SAMPLE_RATE = 22050 #test
-DURATION = 30 # duration of each audio file
-SAMPLES_PER_TRACK = SAMPLE_RATE * DURATION
+AUDIO_SET_DATASET_PATH = "../audio_set_data"
+AUDIO_SET_JSON_PATH = "../audio_set_data.json"
+
+SAMPLE_RATE = 22050
+MARSYAS_DURATION = 30 # duration of each audio file
+AUDIO_SET_DURATION = 10
+SAMPLES_PER_TRACK = SAMPLE_RATE * AUDIO_SET_DURATION
 
 def save_mfcc(dataset_path, json_path, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=5):
     
@@ -49,18 +53,21 @@ def save_mfcc(dataset_path, json_path, n_mfcc=13, n_fft=2048, hop_length=512, nu
                     start_sample = num_samples_per_segment * s # s=0 -> 0
                     finish_sample = start_sample + num_samples_per_segment #s=0 -> num_samples_per_segment
 
-                    mfcc = librosa.feature.mfcc(signal[start_sample:finish_sample], sr=sr, n_fft=n_fft, n_mfcc=n_mfcc, hop_length=hop_length)
+                    try:
+                        mfcc = librosa.feature.mfcc(signal[start_sample:finish_sample], sr=sr, n_fft=n_fft, n_mfcc=n_mfcc, hop_length=hop_length)
                     
-                    mfcc = mfcc.T
+                        mfcc = mfcc.T
 
-                    # store mfcc for segment if it has the expected length
-                    if len(mfcc) == expected_number_mfcc_vectors_per_segment:
-                        data["mfcc"].append(mfcc.tolist())
-                        data["labels"].append(i - 1)
-                        print("{}, segment:{}".format(file_path, s + 1))
+                        # store mfcc for segment if it has the expected length
+                        if len(mfcc) == expected_number_mfcc_vectors_per_segment:
+                            data["mfcc"].append(mfcc.tolist())
+                            data["labels"].append(i - 1)
+                            print("{}, segment:{}".format(file_path, s + 1))
+                    except Exception as e:
+                        continue
 
     with open(json_path, "w") as fp:
         json.dump(data, fp, indent=4)
 
 if __name__ =="__main__":
-    save_mfcc(DATASET_PATH, JSON_PATH, num_segments=10)
+    save_mfcc(AUDIO_SET_DATASET_PATH, AUDIO_SET_JSON_PATH, num_segments=10)

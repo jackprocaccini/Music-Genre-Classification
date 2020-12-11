@@ -12,10 +12,17 @@ AUDIO_SET_JSON_PATH = "../audio_set_data.json"
 SAMPLE_RATE = 22050
 MARSYAS_DURATION = 30
 AUDIO_SET_DURATION = 10
-SAMPLES_PER_TRACK = SAMPLE_RATE * MARSYAS_DURATION
+SAMPLES_PER_TRACK = SAMPLE_RATE * MARSYAS_DURATION # make sure to change this to "SAMPLE_RATE * AUDIO_SET_DURATION" if you're using audio set
 
-def save_mfcc(dataset_path, json_path, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=5):
-    
+
+def main():
+    dataset_path = MARSYAS_DATASET_PATH 
+    json_path = MARSYAS_JSON_PATH
+    n_mfcc=13
+    n_fft=2048
+    hop_length=512
+    num_segments=5
+
     data = {
         "mapping": [],
         "mfcc": [],
@@ -25,32 +32,32 @@ def save_mfcc(dataset_path, json_path, n_mfcc=13, n_fft=2048, hop_length=512, nu
     num_samples_per_segment = int(SAMPLES_PER_TRACK / num_segments)
     expected_number_mfcc_vectors_per_segment = math.ceil(num_samples_per_segment / hop_length)
 
-    for i, (dirpath, dirnames, filenames) in enumerate(os.walk(dataset_path)):
+    for index, (dirpath, dirnames, filenames) in enumerate(os.walk(dataset_path)):
         
         if dirpath is not dataset_path:
             
             dirpath_components = dirpath.split("\\")
-            semantic_label = dirpath_components[-1]
-            data["mapping"].append(semantic_label)
-            print("\nProcessing {}".format(semantic_label))
+            genre_label = dirpath_components[-1]
+            data["mapping"].append(genre_label)
+            print("\nProcessing {}".format(genre_label))
 
             for f in filenames:
 
                 file_path = os.path.join(dirpath, f)
-                signal, sr = librosa.load(file_path, sr=SAMPLE_RATE)
+                signal, samp_rate = librosa.load(file_path, sr=SAMPLE_RATE)
 
                 for s in range(num_segments):
                     start_sample = num_samples_per_segment * s
                     finish_sample = start_sample + num_samples_per_segment
 
                     try:
-                        mfcc = librosa.feature.mfcc(signal[start_sample:finish_sample], sr=sr, n_fft=n_fft, n_mfcc=n_mfcc, hop_length=hop_length)
+                        mfcc = librosa.feature.mfcc(signal[start_sample:finish_sample], sr=samp_rate, n_fft=n_fft, n_mfcc=n_mfcc, hop_length=hop_length)
                     
                         mfcc = mfcc.T
 
                         if len(mfcc) == expected_number_mfcc_vectors_per_segment:
                             data["mfcc"].append(mfcc.tolist())
-                            data["labels"].append(i - 1)
+                            data["labels"].append(index - 1)
                             print("{}, segment:{}".format(file_path, s + 1))
                     except Exception as e:
                         continue
@@ -59,4 +66,4 @@ def save_mfcc(dataset_path, json_path, n_mfcc=13, n_fft=2048, hop_length=512, nu
         json.dump(data, fp, indent=4)
 
 if __name__ =="__main__":
-    save_mfcc(AUDIO_SET_DATASET_PATH, AUDIO_SET_JSON_PATH, num_segments=10)
+    main()

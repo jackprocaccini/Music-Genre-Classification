@@ -16,8 +16,8 @@ SAMPLES_PER_TRACK = SAMPLE_RATE * MARSYAS_DURATION # make sure to change this to
 
 
 def main():
-    dataset_path = MARSYAS_DATASET_PATH 
-    json_path = MARSYAS_JSON_PATH
+    dataset_path = MARSYAS_DATASET_PATH # change depending on which data set you're processing
+    json_path = MARSYAS_JSON_PATH # change depending on which data set you're processing
     n_mfcc=13
     n_fft=2048
     hop_length=512

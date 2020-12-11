@@ -37,8 +37,8 @@ def predict_from_dataset(model, X, y):
     print("Expected index: {}, Predicted index: {}".format(y, predicted_index))
 
 
-def main():
-    with open(MARSYAS_DATA_PATH, "r") as data:
+def main(data_path):
+    with open(data_path, "r") as data:
         data = json.load(data)
 
     X = np.array(data["mfcc"])
@@ -92,4 +92,4 @@ def main():
 
 
 if __name__ =="__main__":
-    main()
+    main(MARSYAS_DATA_PATH) # change parameter to AUDIO_SET_DATA_PATH if you want to use that data set

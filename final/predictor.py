@@ -26,14 +26,12 @@ def preprocess(file_path, num_mfcc=13, n_fft=2048, hop_length=512):
         num_mfcc_vectors_per_segment = math.ceil(samples_per_segment / hop_length)
         mfccs_list = []
 
-        # load audio file
         signal, sample_rate = librosa.load(file_path)
 
         print("Length of signal: {}".format(len(signal)))
         print("Length of samples to consider: {}".format(samples_per_track))
 
         if len(signal) >= samples_per_track:
-            # ensure consistency of the length of the signal
             signal = signal[:samples_per_track]
 
         for x in range(10):
@@ -72,28 +70,12 @@ def main(model_choice="gtzan_model"):
         youtube_url = input("Enter Youtube url: ")
         if youtube_url == "quit":
             sys.exit()
-        # start_time = input("Enter start time in seconds: ")
-        # if start_time == "quit":
-        #     sys.exit()
-        # end_time = input("Enter end time in seconds: ")
-        # if end_time == "quit":
-        #     sys.exit()
 
-        # try:
-        #     start_time = float(start_time)
-        #     end_time = float(end_time)
-        # except Exception as e:
-        #     print("Enter start and end time a numbers in seconds")
-        #     continue
-
-        # try:
-        #     download_audio_trimmed(youtube_url=youtube_url, start_time=start_time, end_time=end_time)
-        # except Exception as e:
-        #     print("Could not download and trim video, try again with another url or enter \"quit\" into any of the input prompts")
-        #     print(e)
-        #     continue
-
-        download_audio(youtube_url)
+        try:
+            download_audio(youtube_url)
+        except Exception as e:
+            print("Couldn't download video. Check the link or try another.")
+            continue
 
         mfccs = preprocess("output.wav")
         mfccs = mfccs[np.newaxis, ..., np.newaxis]
@@ -102,10 +84,6 @@ def main(model_choice="gtzan_model"):
         predicted_genre = GENRE_LIST[np.argmax(predictions)]
 
         print("Predicted genre: {}".format(predicted_genre))
-        # try:
-        #     os.remove("trimmed_input.wav")
-        # except Exception as e:
-        #     continue
 
         try:
             os.remove("output.wav")

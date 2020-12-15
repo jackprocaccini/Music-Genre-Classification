@@ -10,14 +10,14 @@ AUDIO_SET_DATA_PATH = "../audio_set_data.json"
 def plot_history(history):
     fig, axis = plt.subplots(2)
 
-    # accuracy plot
+    # accuracy
     axis[0].plot(history.history["accuracy"], label="train accuracy")
     axis[0].plot(history.history["val_accuracy"], label="test accuracy")
     axis[0].set_ylabel("Accuracy")
     axis[0].legend(loc="lower right")
     axis[0].set_title("Accuracy Eval")
 
-    # error plot
+    # error
     axis[1].plot(history.history["loss"], label="train error")
     axis[1].plot(history.history["val_loss"], label="test error")
     axis[1].set_ylabel("Error")
